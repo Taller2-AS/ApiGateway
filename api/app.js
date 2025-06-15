@@ -8,6 +8,7 @@ const playlistRouter = require('./src/routes/playlistRoutes');
 config({path : '.env'});
 
 const loadClients = require('./grpcClient');
+const userRouter = require('./src/routes/userRoutes');
 
 
 
@@ -20,6 +21,7 @@ loadClients(app);
 
 app.use('/auth', authRouter);
 app.use('/listas-reproduccion', playlistRouter)
+app.use('/usuarios', userRouter);
 
 app.get('/', (req, res) => {
     res.send('El servidor está funcionando correctamente para ser evaluado.');
