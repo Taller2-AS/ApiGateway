@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const { connect } = require('mongoose');
 const { config } = require('dotenv');
 const authRouter = require('./src/routes/authRoutes');
+const playlistRouter = require('./src/routes/playlistRoutes');
 
 config({path : '.env'});
 
@@ -18,6 +19,7 @@ const loadClients = require('./grpcClient');
 loadClients(app);
 
 app.use('/auth', authRouter);
+app.use('/listas-reproduccion', playlistRouter)
 
 app.get('/', (req, res) => {
     res.send('El servidor está funcionando correctamente para ser evaluado.');
