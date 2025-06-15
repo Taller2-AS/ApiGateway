@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package users;
+
+service Users {
+    rpc CreateUser (UserInput) returns (User);
+    rpc GetUser (UserId) returns (User);
+    rpc UpdateUser (UserUpdateInput) returns (User);
+    rpc DeleteUser (UserId) returns (Empty);
+    rpc ListUsers (ListInput) returns (UserList);
+}
+
+message User {
+    string id = 1;
+    string name = 2;
+    string lastName = 3;
+    string email = 4;
+    string role = 5;
+    string createdAt = 6;
+}
+
+message ListInput {
+    string userId = 1;
+    string userEmail = 2;
+    string email = 3;
+    string name = 4;
+    string lastName = 5;
+}
+
+message UserInput {
+    string userId = 1;
+    string id = 2;
+    string name = 3;
+    string lastName = 4;
+    string email = 5;
+    string password = 6;
+    string confirmationPassword = 7;
+    string role = 8;
+}
+
+message UserUpdateInput {
+    string userId = 1;
+    string userEmail = 2;
+    string id = 3;
+    string name = 4;
+    string lastName = 5;
+    string email = 6;
+    string password = 7;
+}
+
+message UserId {
+  string userId = 1;
+  string userEmail = 2;
+  string id = 3;
+}
+
+message UserList {
+  repeated User users = 1;
+}
+
+message Empty {}
