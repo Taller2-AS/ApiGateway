@@ -24,7 +24,8 @@ const UpdatePassword = catchAsync(async (req, res, next) => {
 
     const { id: userId, email: userEmail, role: userRole } = req.user;
 
-    authClient.UpdatePassword({ userId,
+    authClient.UpdatePassword({ 
+        userId,
         userRole,
         userEmail,
         userIdChange,
@@ -46,9 +47,10 @@ const Logout = catchAsync(async (req, res, next) => {
 
     const token = req.headers.authorization.split(' ')[1];
 
-    authClient.Logout({ userId,
-    userEmail,
-    token
+    authClient.Logout({ 
+        userId,
+        userEmail,
+        token
     }, (error, response) => {
         if (error) {
             return next(error);
