@@ -18,8 +18,9 @@ const CreatePlaylist = catchAsync(async (req, res, next) => {
 });
 
 const AddVideoToPlaylist = catchAsync(async (req, res, next) => {
-    const { playlistId, videoId } = req.body;
     const { id: userId, email: userEmail } = req.user;
+    const { videoId } = req.body;
+    const { id: playlistId } = req.params;
 
     playlistsClient.AddVideoToPlaylist({ userId, userEmail, playlistId, videoId }, (error, response) => {
         if (error) {
@@ -47,7 +48,7 @@ const GetPlaylistsByUser = catchAsync(async (req, res, next) => {
 });
 
 const GetVideosFromPlaylist = catchAsync(async (req, res, next) => {
-    const { playlistId } = req.params;
+    const { id: playlistId } = req.params;
     const { id: userId, email: userEmail } = req.user;
 
     playlistsClient.GetVideosFromPlaylist({ userId, userEmail, playlistId }, (error, response) => {
@@ -62,8 +63,9 @@ const GetVideosFromPlaylist = catchAsync(async (req, res, next) => {
 });
 
 const RemoveVideoFromPlaylist = catchAsync(async (req, res, next) => {
-    const { playlistId, videoId } = req.body;
+    const { videoId } = req.body;
     const { id: userId, email: userEmail } = req.user;
+    const { id: playlistId } = req.params;
 
     playlistsClient.RemoveVideoFromPlaylist({ userId, userEmail, playlistId, videoId }, (error, response) => {
         if (error) {
@@ -77,7 +79,7 @@ const RemoveVideoFromPlaylist = catchAsync(async (req, res, next) => {
 });
 
 const DeletePlaylist = catchAsync(async (req, res, next) => {
-    const { playlistId } = req.params;
+    const { id: playlistId } = req.params;
     const { id: userId, email: userEmail } = req.user;
 
     playlistsClient.DeletePlaylist({ userId, userEmail, playlistId }, (error, response) => {

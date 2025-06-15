@@ -16,12 +16,11 @@ const Login = catchAsync(async (req, res, next) => {
 });
 const UpdatePassword = catchAsync(async (req, res, next) => {
     const {
-        userIdChange,
         password,
         newPassword,
         confirmPassword
     } = req.body;
-
+    const { id: userIdChange } = req.params;
     const { id: userId, email: userEmail, role: userRole } = req.user;
 
     authClient.UpdatePassword({ 
