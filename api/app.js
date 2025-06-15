@@ -1,32 +1,45 @@
-const express = require('express');
-const morgan = require('morgan');
-const { connect } = require('mongoose');
-const { config } = require('dotenv');
-const authRouter = require('./src/routes/authRoutes');
-const playlistRouter = require('./src/routes/playlistRoutes');
+// app.js
+const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
+const loadClients = require("./src/grpcClient");
 
-config({path : '.env'});
+const videoRoutes = require("./src/routes/videoRoutes");
+const invoiceRoutes = require("./src/routes/invoiceRoutes");
+const monitoringRoutes = require("./src/routes/monitoringRoutes");
+const socialRoutes = require("./src/routes/socialRoutes");
 
-const loadClients = require('./grpcClient');
-const userRouter = require('./src/routes/userRoutes');
+const app = express();
+dotenv.config();
 
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
 
-
-
-
-
-
-
+// Cargar clientes gRPC
 loadClients(app);
 
-app.use('/auth', authRouter);
-app.use('/listas-reproduccion', playlistRouter)
-app.use('/usuarios', userRouter);
+// Rutas API
+app.use("/api/videos", videoRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/monitoring", monitoringRoutes);
+app.use("/api/social", socialRoutes);
 
-app.get('/', (req, res) => {
-    res.send('El servidor está funcionando correctamente para ser evaluado.');
+// Ruta por defecto
+app.get("/", (req, res) => {
+  res.send("🚀 API Gateway funcionando");
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on http://localhost:${process.env.PORT}`);
+// Middleware de error
+app.use((err, req, res, next) => {
+  console.error("❌", err.message);
+  res.status(err.code || 500).json({ error: err.message || "Error interno" });
+});
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 API Gateway corriendo en http://localhost:${PORT}`);
 });
