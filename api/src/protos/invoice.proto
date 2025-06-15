@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package invoice;
+
+service InvoiceService {
+  rpc CreateInvoice (InvoiceInput) returns (Invoice);
+  rpc GetInvoiceById (InvoiceId) returns (Invoice);
+  rpc UpdateInvoice (InvoiceUpdateInput) returns (Invoice);
+  rpc DeleteInvoice (InvoiceId) returns (Empty);
+  rpc ListInvoices (Empty) returns (InvoiceList);
+}
+
+message Invoice {
+  int32 id = 1;
+  string userId = 2;
+  double monto = 3;
+  string estado = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+  string fechaPago = 7;
+}
+
+message InvoiceInput {
+  string userId = 1;
+  double monto = 2;
+  string estado = 3;
+}
+
+message InvoiceUpdateInput {
+  int32 id = 1;
+  string estado = 2;
+}
+
+message InvoiceId {
+  int32 id = 1;
+}
+
+message InvoiceList {
+  repeated Invoice invoices = 1;
+}
+
+message Empty {}
