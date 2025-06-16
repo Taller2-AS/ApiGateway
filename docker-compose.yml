@@ -1,0 +1,246 @@
+version: '3.8'
+
+services:
+
+  mongodb-videos:
+    image: mongo:latest
+    container_name: mongodb-videos
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+
+  mariadb-invoices:
+    image: mariadb:latest
+    container_name: mariadb-invoices
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: streamflow_facturacion
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: root
+    ports:
+      - "3308:3306"
+
+  mongodb-social:
+    image: mongo:latest
+    container_name: mongodb-social
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27018:27017"
+
+  mongodb-monitoring:
+    image: mongo:latest
+    container_name: mongodb-monitoring
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27019:27017"
+
+  postgres-playlists:
+    image: postgres:15
+    container_name: postgres-playlists
+    restart: always
+    environment:
+      POSTGRES_USER: playlist_user
+      POSTGRES_PASSWORD: playlist_pass
+      POSTGRES_DB: playlist_db
+    ports:
+      - "5435:5432"
+
+  postgres-auth:
+    image: postgres:15
+    container_name: postgres-auth
+    restart: always
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_pass
+      POSTGRES_DB: auth_db
+    ports:
+      - "5436:5432"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  videos-service:
+    build:
+        context: ../video-service/videoService
+        dockerfile: Dockerfile
+    container_name: videos-service
+    depends_on:
+      - mongodb-videos
+      - rabbitmq
+    environment:
+      MONGODB_URI: mongodb://admin:root@mongodb-videos:27017/admin
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3000:3000"
+
+  invoices-service:
+    build:
+        context: ../invoices-service/invoicesService
+        dockerfile: Dockerfile
+    container_name: invoices-service
+    depends_on:
+      - mariadb-invoices
+      - rabbitmq
+    environment:
+      DB_URI: mariadb://admin:root@mariadb-invoices:3308/streamflow_facturacion
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3001:3001"
+
+  social-service:
+    build:
+        context: ../social-service/socialService
+        dockerfile: Dockerfile
+    container_name: social-service
+    depends_on:
+      - mongodb-social
+      - rabbitmq
+    environment:
+      MONGO_URI: mongodb://admin:root@mongodb-social:27017/admin
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3003:3003"
+
+  monitoring-service:
+    build:
+        context: ../monitoring-service/monitoringService
+        dockerfile: Dockerfile
+    container_name: monitoring-service
+    depends_on:
+      - mongodb-monitoring
+      - rabbitmq
+    environment:
+      MONGO_URI: mongodb://admin:root@mongodb-monitoring:27017/admin
+
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3004:3004"
+
+  playlists-service:
+    build:
+        context: ../playlists-service/playlistsService
+        dockerfile: Dockerfile
+    container_name: playlists-service
+    depends_on:
+      - postgres-playlists
+      - rabbitmq
+    environment:
+      DB_URI: postgres://playlist_user:playlist_pass@postgres-playlists:5432/playlist_db
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3005:3005"
+
+  auth-service:
+    build:
+        context: ../auth-service/authService
+        dockerfile: Dockerfile
+    container_name: auth-service
+    depends_on:
+      - postgres-auth
+      - rabbitmq
+    environment:
+      POSTGRES_URI: postgres://auth_user:auth_pass@postgres-auth:5432/auth_db
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    ports:
+      - "3006:3006"
+
+  apigateway:
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    container_name: apigateway
+    depends_on:
+      - videos-service
+      - invoices-service
+      - social-service
+      - monitoring-service
+      - playlists-service
+      - auth-service
+    ports:
+      - "3007:3007"
+    environment:
+        VIDEO_SERVICE_URL: videos-service:50051
+        INVOICE_SERVICE_URL: invoices-service:50052
+        MONITORING_SERVICE_URL: monitoring-service:50053
+        SOCIAL_SERVICE_URL: social-service:50054
+        PLAYLIST_SERVICE_URL: playlists-service:50055
+        AUTH_SERVICE_URL: auth-service:50056
+        USER_SERVICE_URL: users-service:50057
+
+  apigateway1:
+        build: .
+        container_name: apigateway1
+        ports:
+        - "3101:3000"
+        environment:
+                VIDEO_SERVICE_URL: videos-service:50051
+                INVOICE_SERVICE_URL: invoices-service:50052
+                MONITORING_SERVICE_URL: monitoring-service:50053
+                SOCIAL_SERVICE_URL: social-service:50054
+                PLAYLIST_SERVICE_URL: playlists-service:50055
+                AUTH_SERVICE_URL: auth-service:50056
+                USER_SERVICE_URL: users-service:50057
+
+  apigateway2:
+        build: .
+        container_name: apigateway2
+        ports:
+        - "3102:3000"
+        environment:
+                VIDEO_SERVICE_URL: videos-service:50051
+                INVOICE_SERVICE_URL: invoices-service:50052
+                MONITORING_SERVICE_URL: monitoring-service:50053
+                SOCIAL_SERVICE_URL: social-service:50054
+                PLAYLIST_SERVICE_URL: playlists-service:50055
+                AUTH_SERVICE_URL: auth-service:50056
+                USER_SERVICE_URL: users-service:50057
+
+  apigateway3:
+        build: .
+        container_name: apigateway3
+        ports:
+        - "3103:3000"
+        environment:
+                VIDEO_SERVICE_URL: videos-service:50051
+                INVOICE_SERVICE_URL: invoices-service:50052
+                MONITORING_SERVICE_URL: monitoring-service:50053
+                SOCIAL_SERVICE_URL: social-service:50054
+                PLAYLIST_SERVICE_URL: playlists-service:50055
+                AUTH_SERVICE_URL: auth-service:50056
+                USER_SERVICE_URL: users-service:50057
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/njs:/etc/nginx/njs:ro
+      - ./nginx/postdata.log:/var/nginx/postdata.log
+      - ./nginx/ssl/mycert.pem:/etc/nginx/ssl/mycert.pem:ro
+      - ./nginx/ssl/mykey.pem:/etc/nginx/ssl/mykey.pem:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+

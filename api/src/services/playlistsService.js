@@ -1,10 +1,11 @@
 const catchAsync = require('../utils/catchAsync');
-const { playlistsClient } = req.app.locals;
 
 
 const CreatePlaylist = catchAsync(async (req, res, next) => {
     const { name } = req.body;
     const { id: userId, email: userEmail } = req.user;
+    const { playlistsClient } = req.app.locals;
+
 
     playlistsClient.CreatePlaylist({ userId, userEmail, name }, (error, response) => {
         if (error) {

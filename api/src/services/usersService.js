@@ -1,9 +1,10 @@
 const catchAsync = require('../utils/catchAsync');
-const { usersClient } = req.app.locals;
 
 const CreateUser = catchAsync(async (req, res, next) => {
     const { id, name, lastName, email, password, confirmationPassword, role } = req.body;
     const { id: userId } = req.user;
+    const { usersClient } = req.app.locals;
+
 
     usersClient.CreateUser({ 
         userId,

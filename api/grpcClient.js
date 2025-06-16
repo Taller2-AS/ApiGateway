@@ -4,6 +4,16 @@ const { config } = require("dotenv");
 
 config();
 
+console.log("AUTH_SERVICE_URL:", process.env.AUTH_SERVICE_URL);
+console.log("USER_SERVICE_URL:", process.env.USER_SERVICE_URL);
+console.log("VIDEO_SERVICE_URL:", process.env.VIDEO_SERVICE_URL);
+console.log("INVOICE_SERVICE_URL:", process.env.INVOICE_SERVICE_URL);
+console.log("MONITORING_SERVICE_URL:", process.env.MONITORING_SERVICE_URL);
+console.log("SOCIAL_SERVICE_URL:", process.env.SOCIAL_SERVICE_URL);
+console.log("PLAYLIST_SERVICE_URL:", process.env.PLAYLIST_SERVICE_URL);
+
+
+
 const loadClients = (app) => {
   // Auth Service
   const authProto = loadProto("auth");

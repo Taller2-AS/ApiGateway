@@ -6,7 +6,7 @@ const {
   GetVideosFromPlaylist,
   RemoveVideoFromPlaylist,
   DeletePlaylist
-} = require('../services/playlistService');
+} = require('../services/playlistsService');
 
 const authMiddleware = require('../middlewares/authMiddleware');
 

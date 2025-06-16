@@ -1,8 +1,9 @@
 const catchAsync = require("../utils/catchAsync")
-const { authClient } = req.app.locals;
 
 const Login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
+    const { authClient } = req.app.locals;
+
 
     authClient.Login({ email, password }, (error, response) => {
         if (error) {

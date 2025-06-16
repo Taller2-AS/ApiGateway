@@ -5,7 +5,7 @@ const {
   UpdateUser,
   DeleteUser,
   ListUsers
-} = require('../services/userService');
+} = require('../services/usersService');
 
 const authMiddleware = require('../middlewares/authMiddleware');
 
