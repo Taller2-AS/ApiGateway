@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Construir imagen y etiquetar
-        working-directory: ../api
+        working-directory: api
         run: |
           docker build -t kzeta11/user-service:latest .
           docker tag kzeta11/user-service:latest kzeta11/user-service:${{ github.sha }}
