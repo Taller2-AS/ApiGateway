@@ -7,17 +7,15 @@ const {
   ListUsers
 } = require('../services/usersService');
 
-const authMiddleware = require('../middlewares/authMiddleware');
-
 const userRouter = Router();
 
 userRouter.route('/')
-  .post(authMiddleware, CreateUser)
-  .get(authMiddleware, ListUsers);
+  .post(CreateUser)
+  .get(ListUsers);
 
-  userRouter.route('/:id')
-  .get(authMiddleware, GetUser)
-  .patch(authMiddleware, UpdateUser)
-  .delete(authMiddleware, DeleteUser);
+userRouter.route('/:id')
+  .get(GetUser)
+  .patch(UpdateUser)
+  .delete(DeleteUser);
 
 module.exports = userRouter;

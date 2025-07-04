@@ -12,8 +12,8 @@ const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const playlistRoutes = require("./src/routes/playlistRoutes");
 
-const app = express();
 dotenv.config();
+const app = express();
 
 // Middlewares
 app.use(cors());
@@ -32,24 +32,42 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/playlists", playlistRoutes);
 
-// Ruta por defecto
+// Ruta de prueba
 app.get("/", (req, res) => {
   res.send("🚀 API Gateway funcionando");
 });
 
-// Middleware de error
+// Middleware global de errores
 app.use((err, req, res, next) => {
   console.error("❌", err.message);
-  // Validar que el código sea un HTTP válido (100–599)
-  const statusCode = Number.isInteger(err.code) && err.code >= 100 && err.code <= 599
-    ? err.code
-    : 500;
+  const statusCode =
+    Number.isInteger(err.code) && err.code >= 100 && err.code <= 599
+      ? err.code
+      : 500;
 
   res.status(statusCode).json({ error: err.message || "Error interno" });
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 API Gateway corriendo en http://localhost:${PORT}`);
-});
+// Solo iniciar si se ejecuta directamente (evita doble arranque en testing)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  const server = app.listen(PORT, () => {
+    console.log(`🚀 API Gateway corriendo en http://localhost:${PORT}`);
+  });
+
+  // Cierre por promesas no manejadas
+  process.on("unhandledRejection", (err) => {
+    console.error("❌ UNHANDLED REJECTION:", err);
+    server.close(() => process.exit(1));
+  });
+
+  // Cierre limpio en contenedores o procesos
+  process.on("SIGTERM", () => {
+    console.log("📦 SIGTERM recibido. Cerrando servidor...");
+    server.close(() => {
+      console.log("🛑 Servidor apagado.");
+    });
+  });
+}
+
+module.exports = app;

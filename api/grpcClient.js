@@ -15,12 +15,13 @@ console.log("PLAYLIST_SERVICE_URL:", process.env.PLAYLIST_SERVICE_URL);
 
 
 const loadClients = (app) => {
+  /** 
   // Auth Service
   const authProto = loadProto("auth");
   app.locals.authClient = new authProto.AuthService(
     process.env.AUTH_SERVICE_URL,
     credentials.createInsecure()
-  );
+  );*/
 
   // Playlist Service
   const playlistProto = loadProto("playlist");
