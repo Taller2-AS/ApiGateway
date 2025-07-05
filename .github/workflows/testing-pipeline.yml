@@ -1,10 +1,3 @@
-name: Test User Service
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   test_users:
     runs-on: ubuntu-latest
@@ -21,16 +14,19 @@ jobs:
       - name: Levantar contenedores con Docker Compose
         run: docker compose up -d
 
-      - name: Revisar logs si users-service no está corriendo
+      - name: Esperar a que users-service esté corriendo
         run: |
-          if ! docker ps --format '{{.Names}}' | grep -q users-service; then
-            echo "❌ users-service no está corriendo. Mostrando logs..."
-            docker compose logs users-service || true
-            exit 1
-          fi
-
-      - name: Esperar a que los servicios estén listos
-        run: sleep 20
+          for i in {1..10}; do
+            if docker logs users-service 2>&1 | grep -q "Servidor gRPC escuchando"; then
+              echo "✅ users-service está arriba"
+              exit 0
+            fi
+            echo "⏳ Esperando a users-service..."
+            sleep 3
+          done
+          echo "❌ users-service no se levantó a tiempo"
+          docker compose logs users-service || true
+          exit 1
 
       - name: Ver contenedores activos
         run: docker ps
@@ -42,10 +38,6 @@ jobs:
       - name: Ejecutar pruebas
         working-directory: ./api
         run: npm test
-        env:
-          USER_SERVICE_URL: ${{ env.USER_SERVICE_URL }}
-          RABBITMQ_URL: ${{ env.RABBITMQ_URL }}
-          MONGO_DATABASE: ${{ env.MONGO_DATABASE }}
 
       - name: Apagar contenedores
         if: always()
