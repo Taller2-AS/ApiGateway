@@ -21,6 +21,14 @@ jobs:
       - name: Levantar contenedores con Docker Compose
         run: docker compose up -d
 
+      - name: Revisar logs si users-service no está corriendo
+        run: |
+          if ! docker ps --format '{{.Names}}' | grep -q users-service; then
+            echo "❌ users-service no está corriendo. Mostrando logs..."
+            docker compose logs users-service || true
+            exit 1
+          fi
+
       - name: Esperar a que los servicios estén listos
         run: sleep 20
 
