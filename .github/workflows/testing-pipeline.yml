@@ -1,0 +1,46 @@
+name: Test User Service
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_users:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Levantar contenedores con Docker Compose
+        run: docker-compose up -d
+
+      - name: Esperar a que los servicios estén listos
+        run: sleep 20
+
+      - name: Ver contenedores activos
+        run: docker ps
+
+      - name: Instalar dependencias en API Gateway
+        working-directory: ./api
+        run: npm install
+
+      - name: Ejecutar pruebas
+        working-directory: ./api
+        run: npm test
+
+      - name: Apagar contenedores
+        if: always()
+        run: docker-compose down
