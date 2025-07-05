@@ -1,4 +1,4 @@
-name: Docker Push Pipeline
+name: Docker Push User Service (clonado)
 
 on:
   push:
@@ -10,8 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del código
+      - name: Checkout del repositorio de la API Gateway
         uses: actions/checkout@v3
+
+      - name: Clonar microservicio user-service desde otro repo
+        run: |
+          git clone https://github.com/Taller2-AS/users-service.git users-service
 
       - name: Configurar Docker
         uses: docker/setup-buildx-action@v2
@@ -24,7 +28,7 @@ jobs:
 
       - name: Construir imagen y etiquetar
         run: |
-          cd $GITHUB_WORKSPACE/api
+          cd user-service
           docker build -t kzeta11/user-service:latest .
           docker tag kzeta11/user-service:latest kzeta11/user-service:${{ github.sha }}
 
