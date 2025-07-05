@@ -1,3 +1,10 @@
+name: Test User Service
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   test_users:
     runs-on: ubuntu-latest
