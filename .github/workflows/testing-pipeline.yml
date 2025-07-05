@@ -13,12 +13,13 @@ jobs:
       mongo:
         image: mongo:latest
         ports:
-          - 27017:27017
+          - 27018:27017  # ✅ Evita conflicto con otros procesos
+
       rabbitmq:
         image: rabbitmq:3-management
         ports:
-          - 5672:5672
-          - 15672:15672
+          - 5673:5672     # ✅ Evita conflicto
+          - 15673:15672
 
     steps:
       - name: Clonar repositorio
