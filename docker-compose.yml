@@ -10,6 +10,8 @@ services:
       - "50057:50057"
     environment:
       MONGO_DATABASE: mongodb://admin:root@mongodb-users:27017/admin
+      MONGO_USER: admin
+      MONGO_PASSWORD: root
       RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
     depends_on:
       - mongodb-users
