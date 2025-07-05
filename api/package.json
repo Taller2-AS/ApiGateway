@@ -2,11 +2,11 @@
   "name": "apigateway",
   "version": "1.0.0",
   "description": "��#\u0000 \u0000A\u0000p\u0000i\u0000G\u0000a\u0000t\u0000e\u0000w\u0000a\u0000y\u0000\r\u0000 \u0000",
-  "main": "api/app.js",
+  "main": "app.js",
   "scripts": {
     "test": "jest",
-    "start": "node api/app.js",
-    "dev": "nodemon api/app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",

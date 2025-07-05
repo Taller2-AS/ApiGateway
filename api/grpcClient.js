@@ -21,14 +21,14 @@ const loadClients = (app) => {
   app.locals.authClient = new authProto.AuthService(
     process.env.AUTH_SERVICE_URL,
     credentials.createInsecure()
-  );*/
+  );
 
   // Playlist Service
   const playlistProto = loadProto("playlist");
   app.locals.playlistsClient = new playlistProto.PlaylistService(
     process.env.PLAYLIST_SERVICE_URL,
     credentials.createInsecure()
-  );
+  );*/
 
   // Users Service
   const userProto = loadProto("users");
@@ -37,6 +37,7 @@ const loadClients = (app) => {
     credentials.createInsecure()
   );
 
+  /** 
   // Video Service
   const videoProto = loadProto("video");
   app.locals.videoClient = new videoProto.VideoService(
@@ -63,7 +64,7 @@ const loadClients = (app) => {
   app.locals.socialClient = new socialProto.SocialService(
     process.env.SOCIAL_SERVICE_URL,
     credentials.createInsecure()
-  );
+  );*/
 };
 
 module.exports = loadClients;
