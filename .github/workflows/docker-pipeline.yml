@@ -28,7 +28,7 @@ jobs:
 
       - name: Construir imagen y etiquetar
         run: |
-          cd user-service
+          cd users-service
           docker build -t kzeta11/user-service:latest .
           docker tag kzeta11/user-service:latest kzeta11/user-service:${{ github.sha }}
 
