@@ -57,18 +57,6 @@ services:
     networks:
       - app-network
 
-  tests:
-    build:
-      context: ./api
-    command: npm test
-    depends_on:
-      - apigateway
-    environment:
-      USER_SERVICE_URL: users-service:50057
-    networks:
-      - app-network
-
-
   nginx:
     image: nginx
     container_name: nginx

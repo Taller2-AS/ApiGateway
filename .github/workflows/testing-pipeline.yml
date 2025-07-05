@@ -42,9 +42,13 @@ jobs:
         working-directory: ./api
         run: npm install
 
-      - name: Ejecutar pruebas
+      - name: Ejecutar pruebas directamente
         working-directory: ./api
         run: npm test
+        env:
+          USER_SERVICE_URL: users-service:50057
+          RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+          MONGO_DATABASE: mongodb://admin:root@mongodb-users:27017/admin
 
       - name: Apagar contenedores
         if: always()
