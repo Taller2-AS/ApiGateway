@@ -1,8 +1,9 @@
 const { credentials } = require("@grpc/grpc-js");
 const loadProto = require("./src/utils/loadproto");
-const { config } = require("dotenv");
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
-config();
 
 console.log("AUTH_SERVICE_URL:", process.env.AUTH_SERVICE_URL);
 console.log("USER_SERVICE_URL:", process.env.USER_SERVICE_URL);

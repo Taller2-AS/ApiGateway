@@ -17,6 +17,19 @@ services:
     networks:
       - app-network
 
+  apigateway:
+    build:
+      context: ./api
+    container_name: apigateway
+    ports:
+      - "3000:3000"
+    environment:
+      USER_SERVICE_URL: users-service:50057
+    depends_on:
+      - users-service
+    networks:
+      - app-network
+
   mongodb-users:
     image: mongo:latest
     container_name: mongodb-users
@@ -41,6 +54,18 @@ services:
       - "15672:15672"
     networks:
       - app-network
+
+  tests:
+    build:
+      context: ./api
+    command: npm test
+    depends_on:
+      - apigateway
+    environment:
+      USER_SERVICE_URL: users-service:50057
+    networks:
+      - app-network
+
 
   nginx:
     image: nginx
