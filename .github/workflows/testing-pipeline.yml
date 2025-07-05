@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      USER_SERVICE_URL: "users-service:50057"
-      RABBITMQ_URL: "amqp://admin:admin@rabbitmq:5672"
-      MONGO_DATABASE: "mongodb://admin:root@mongodb-users:27017/admin"
+      USER_SERVICE_URL: "localhost:50057"
+      RABBITMQ_URL: "amqp://admin:admin@localhost:5672"
+      MONGO_DATABASE: "mongodb://admin:root@localhost:27017/admin"
 
     steps:
       - name: Clonar repositorio
@@ -46,9 +46,9 @@ jobs:
         working-directory: ./api
         run: npm test
         env:
-          USER_SERVICE_URL: users-service:50057
-          RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
-          MONGO_DATABASE: mongodb://admin:root@mongodb-users:27017/admin
+          USER_SERVICE_URL: localhost:50057
+          RABBITMQ_URL: amqp://admin:admin@localhost:5672
+          MONGO_DATABASE: mongodb://admin:root@localhost:27017/admin
 
       - name: Apagar contenedores
         if: always()
